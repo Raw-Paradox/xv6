@@ -1,16 +1,6 @@
 from __future__ import print_function
 
-import sys
-import os
-import re
-import time
-import socket
-import select
-import subprocess
-import errno
-import shutil
-import random
-import string
+import sys, os, re, time, socket, select, subprocess, errno, shutil, random, string
 from subprocess import check_call, Popen
 from optparse import OptionParser
 
@@ -26,7 +16,6 @@ TESTS = []
 TOTAL = POSSIBLE = 0
 PART_TOTAL = PART_POSSIBLE = 0
 CURRENT_TEST = None
-
 
 def test(points, title=None, parent=None):
     """Decorator for declaring test functions.  If title is None, the
@@ -70,8 +59,8 @@ def test(points, title=None, parent=None):
             # Display and handle test result
             POSSIBLE += points
             if points:
-                print("%s: %s" % (title,
-                                  (color("red", "FAIL") if fail else color("green", "OK"))), end=' ')
+                print("%s: %s" % (title, \
+                    (color("red", "FAIL") if fail else color("green", "OK"))), end=' ')
             if time.time() - start > 0.1:
                 print("(%.1fs)" % (time.time() - start), end=' ')
             print()
@@ -96,17 +85,15 @@ def test(points, title=None, parent=None):
         return run_test
     return register_test
 
-
 def end_part(name):
     def show_part():
         global PART_TOTAL, PART_POSSIBLE
-        print("Part %s score: %d/%d" %
-              (name, TOTAL - PART_TOTAL, POSSIBLE - PART_POSSIBLE))
+        print("Part %s score: %d/%d" % \
+            (name, TOTAL - PART_TOTAL, POSSIBLE - PART_POSSIBLE))
         print()
         PART_TOTAL, PART_POSSIBLE = TOTAL, POSSIBLE
     show_part.title = ""
     TESTS.append(show_part)
-
 
 def run_tests():
     """Set up for testing and run the registered test functions."""
@@ -139,7 +126,6 @@ def run_tests():
     if TOTAL < POSSIBLE:
         sys.exit(1)
 
-
 def get_current_test():
     if not CURRENT_TEST:
         raise RuntimeError("No test is running")
@@ -149,9 +135,7 @@ def get_current_test():
 # Assertions
 #
 
-
 __all__ += ["assert_equal", "assert_lines_match"]
-
 
 def assert_equal(got, expect, msg=""):
     if got == expect:
@@ -161,7 +145,6 @@ def assert_equal(got, expect, msg=""):
     raise AssertionError("%sgot:\n  %s\nexpected:\n  %s" %
                          (msg, str(got).replace("\n", "\n  "),
                           str(expect).replace("\n", "\n  ")))
-
 
 def assert_lines_match(text, *regexps, **kw):
     """Assert that all of regexps match some line in text.  If a 'no'
@@ -217,18 +200,14 @@ def assert_lines_match(text, *regexps, **kw):
 # Utilities
 #
 
-
-__all__ += ["make", "maybe_unlink", "reset_fs",
-            "color", "random_str", "check_time"]
+__all__ += ["make", "maybe_unlink", "reset_fs", "color", "random_str", "check_time"]
 
 MAKE_TIMESTAMP = 0
-
 
 def pre_make():
     """Delay prior to running make to ensure file mtimes change."""
     while int(time.time()) == MAKE_TIMESTAMP:
         time.sleep(0.1)
-
 
 def post_make():
     """Record the time after make completes so that the next run of
@@ -236,18 +215,15 @@ def post_make():
     global MAKE_TIMESTAMP
     MAKE_TIMESTAMP = int(time.time())
 
-
 def make(*target):
     pre_make()
     if Popen(("make",) + target).wait():
         sys.exit(1)
     post_make()
 
-
 def show_command(cmd):
     from pipes import quote
     print("\n$", " ".join(map(quote, cmd)))
-
 
 def maybe_unlink(*paths):
     for path in paths:
@@ -257,25 +233,20 @@ def maybe_unlink(*paths):
             if e.errno != errno.ENOENT:
                 raise
 
-
 COLORS = {"default": "\033[0m", "red": "\033[31m", "green": "\033[32m"}
-
 
 def color(name, text):
     if options.color == "always" or (options.color == "auto" and os.isatty(1)):
         return COLORS[name] + text + COLORS["default"]
     return text
 
-
 def reset_fs():
     if os.path.exists("obj/fs/clean-fs.img"):
         shutil.copyfile("obj/fs/clean-fs.img", "obj/fs/fs.img")
 
-
 def random_str(n=8):
     letters = string.ascii_letters + string.digits
     return ''.join(random.choice(letters) for _ in range(n))
-
 
 def check_time():
     try:
@@ -283,8 +254,7 @@ def check_time():
         with open('time.txt') as f:
             d = f.read().strip()
             if not re.match(r'^\d+$', d):
-                raise AssertionError(
-                    'time.txt does not contain a single integer (number of hours spent on the lab)')
+                raise AssertionError('time.txt does not contain a single integer (number of hours spent on the lab)')
     except IOError:
         raise AssertionError('Cannot read time.txt')
 
@@ -294,7 +264,6 @@ def check_time():
 #
 
 __all__ += ["QEMU", "GDBClient"]
-
 
 class QEMU(object):
     _GDBPORT = None
@@ -366,7 +335,6 @@ QEMU appears to already be running.  Please exit it if possible or use
         if self.proc:
             self.proc.terminate()
 
-
 class GDBClient(object):
     def __init__(self, port, timeout=15):
         start = time.time()
@@ -432,10 +400,8 @@ class GDBClient(object):
 
 __all__ += ["TerminateTest", "Runner"]
 
-
 class TerminateTest(Exception):
     pass
-
 
 class Runner():
     def __init__(self, *default_monitors):
@@ -547,10 +513,7 @@ Failed to shutdown QEMU.  You might need to 'killall qemu' or
 # Monitors
 #
 
-
-__all__ += ["save", "stop_breakpoint",
-            "call_on_line", "stop_on_line", "shell_script"]
-
+__all__ += ["save", "stop_breakpoint", "call_on_line", "stop_on_line", "shell_script"]
 
 def save(path):
     """Return a monitor that writes QEMU's output to path.  If the
@@ -575,7 +538,6 @@ def save(path):
     f = open(path, "wb")
     return setup_save
 
-
 def stop_breakpoint(addr):
     """Returns a monitor that stops when addr is reached.  addr may be
     a number or the name of a symbol."""
@@ -590,14 +552,12 @@ def stop_breakpoint(addr):
             runner.gdb.breakpoint(addr)
     return setup_breakpoint
 
-
 def call_on_line(regexp, callback):
     """Returns a monitor that calls 'callback' when QEMU prints a line
     matching 'regexp'."""
 
     def setup_call_on_line(runner):
         buf = bytearray()
-
         def handle_output(output):
             buf.extend(output)
             while b"\n" in buf:
@@ -608,7 +568,6 @@ def call_on_line(regexp, callback):
         runner.qemu.on_output.append(handle_output)
     return setup_call_on_line
 
-
 def stop_on_line(regexp):
     """Returns a monitor that stops when QEMU prints a line matching
     'regexp'."""
@@ -616,7 +575,6 @@ def stop_on_line(regexp):
     def stop(line):
         raise TerminateTest
     return call_on_line(regexp, stop)
-
 
 def shell_script(script, terminate_match=None):
     """Returns a monitor that plays the script, and stops when the script is
@@ -626,7 +584,6 @@ def shell_script(script, terminate_match=None):
         class context:
             n = 0
             buf = bytearray()
-
         def handle_output(output):
             context.buf.extend(output)
             if terminate_match is not None:

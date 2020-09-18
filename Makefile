@@ -151,19 +151,14 @@ UPROGS=\
 	$C/_grind\
 	$C/_wc\
 	$C/_zombie\
+	$C/_trace\
+	$C/_sysinfotest\
 	$C/_sleep\
 	$C/_pingpong\
 	$C/_find\
 	$C/_xargs\
 	$C/_primes\
 	$C/_test\
-
-
-ifeq ($(LAB),syscall)
-UPROGS += \
-	$U/_trace\
-	$U/_sysinfotest
-endif
 
 ifeq ($(LAB),trap)
 UPROGS += \
@@ -187,8 +182,8 @@ ifeq ($(LAB),util)
 	UEXTRA += $U/xargstest.sh
 endif
 
-fs.img: mkfs/mkfs README $(UEXTRA) $(UPROGS)
-	mkfs/mkfs fs.img README $(UEXTRA) $(UPROGS)
+fs.img: mkfs/mkfs README.md $(UEXTRA) $(UPROGS)
+	mkfs/mkfs fs.img README.md $(UEXTRA) $(UPROGS)
 
 -include kernel/*.d user/*.d
 
