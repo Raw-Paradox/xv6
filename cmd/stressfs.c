@@ -7,7 +7,7 @@
 //    for (i = 0; i < 40000; i++)
 //      asm volatile("");
 
-#include "user/user.h"
+#include "lib/user.h"
 
 int main(int argc, char *argv[]) {
     int fd, i;

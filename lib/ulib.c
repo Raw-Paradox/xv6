@@ -1,4 +1,4 @@
-#include "user/user.h"
+#include "lib/user.h"
 
 char *strcpy(char *s, const char *t) {
     char *os;

@@ -1,4 +1,4 @@
-#include "user/user.h"
+#include "lib/user.h"
 #include "kernel/param.h"
 
 // Memory allocator by Kernighan and Ritchie,

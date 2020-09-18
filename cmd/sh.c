@@ -1,6 +1,6 @@
 // Shell.
 
-#include "user/user.h"
+#include "lib/user.h"
 
 // Parsed command representation
 #define EXEC 1

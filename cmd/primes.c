@@ -1,4 +1,4 @@
-#include "user/user.h"
+#include "lib/user.h"
 
 int main(int argc, char const *argv[]) {
     int pipeline[2];

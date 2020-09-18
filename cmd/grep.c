@@ -1,6 +1,6 @@
 // Simple grep.  Only supports ^ . * $ operators.
 
-#include "user/user.h"
+#include "lib/user.h"
 
 char buf[1024];
 int match(char *, char *);

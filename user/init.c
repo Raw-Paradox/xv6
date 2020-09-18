@@ -1,6 +1,6 @@
 // init: The initial user-level program
 
-#include "user/user.h"
+#include "lib/user.h"
 #include "kernel/spinlock.h"
 #include "kernel/sleeplock.h"
 #include "kernel/file.h"

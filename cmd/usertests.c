@@ -1,5 +1,5 @@
 #include "kernel/param.h"
-#include "user/user.h"
+#include "lib/user.h"
 #include "kernel/syscall.h"
 #include "kernel/memlayout.h"
 #include "kernel/riscv.h"

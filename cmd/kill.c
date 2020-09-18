@@ -1,4 +1,4 @@
-#include "user/user.h"
+#include "lib/user.h"
 
 int main(int argc, char **argv) {
     int i;
