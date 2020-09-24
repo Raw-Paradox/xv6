@@ -203,6 +203,9 @@ void userinit(void) {
     p = allocproc();
     initproc = p;
 
+    //setup trace mask
+    p->mask = 0;
+
     // allocate one user page and copy init's instructions
     // and data into it.
     uvminit(p->pagetable, initcode, sizeof(initcode));
@@ -259,6 +262,9 @@ int fork(void) {
     np->sz = p->sz;
 
     np->parent = p;
+
+    // trace mask set to child
+    np->mask = p->mask;
 
     // copy saved user registers.
     *(np->trapframe) = *(p->trapframe);

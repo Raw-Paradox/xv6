@@ -18,6 +18,7 @@ void grep(char *pattern, int fd) {
             *q = 0;
             if (match(pattern, p)) {
                 *q = '\n';
+                // printf("%d ready to write\n", getpid());
                 write(1, p, q + 1 - p);
             }
             p = q + 1;

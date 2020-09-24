@@ -87,3 +87,16 @@ sys_uptime(void) {
     release(&tickslock);
     return xticks;
 }
+
+// trace the syscall invoke of current process and its children
+uint64 sys_trace() {
+    int mask;
+    if (argint(0, &mask) < 0)
+        return -1;
+    myproc()->mask = mask;
+    return 0;
+}
+
+uint64 sys_sysinfo(){
+    return 0;
+}

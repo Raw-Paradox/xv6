@@ -1,6 +1,5 @@
 // which hart (core) is this?
-static inline uint64
-r_mhartid() {
+static inline uint64 r_mhartid() {
     uint64 x;
     asm volatile("csrr %0, mhartid"
                  : "=r"(x));
@@ -15,16 +14,14 @@ r_mhartid() {
 #define MSTATUS_MPP_U (0L << 11)
 #define MSTATUS_MIE (1L << 3)  // machine-mode interrupt enable.
 
-static inline uint64
-r_mstatus() {
+static inline uint64 r_mstatus() {
     uint64 x;
     asm volatile("csrr %0, mstatus"
                  : "=r"(x));
     return x;
 }
 
-static inline void
-w_mstatus(uint64 x) {
+static inline void w_mstatus(uint64 x) {
     asm volatile("csrw mstatus, %0"
                  :
                  : "r"(x));
@@ -33,8 +30,7 @@ w_mstatus(uint64 x) {
 // machine exception program counter, holds the
 // instruction address to which a return from
 // exception will go.
-static inline void
-w_mepc(uint64 x) {
+static inline void w_mepc(uint64 x) {
     asm volatile("csrw mepc, %0"
                  :
                  : "r"(x));
@@ -48,8 +44,7 @@ w_mepc(uint64 x) {
 #define SSTATUS_SIE (1L << 1)   // Supervisor Interrupt Enable
 #define SSTATUS_UIE (1L << 0)   // User Interrupt Enable
 
-static inline uint64
-r_sstatus() {
+static inline uint64 r_sstatus() {
     uint64 x;
     asm volatile("csrr %0, sstatus"
                  : "=r"(x));

@@ -5,39 +5,40 @@
 
 -include conf/lab.mk
 
+O=output
 K=kernel
 U=user
 L=lib
 C=cmd
 
 OBJS = \
-  $K/entry.o \
-  $K/start.o \
-  $K/console.o \
-  $K/printf.o \
-  $K/uart.o \
-  $K/kalloc.o \
-  $K/spinlock.o \
-  $K/string.o \
-  $K/main.o \
-  $K/vm.o \
-  $K/proc.o \
-  $K/swtch.o \
-  $K/trampoline.o \
-  $K/trap.o \
-  $K/syscall.o \
-  $K/sysproc.o \
-  $K/bio.o \
-  $K/fs.o \
-  $K/log.o \
-  $K/sleeplock.o \
-  $K/file.o \
-  $K/pipe.o \
-  $K/exec.o \
-  $K/sysfile.o \
-  $K/kernelvec.o \
-  $K/plic.o \
-  $K/virtio_disk.o \
+  $O/$K/entry.o \
+  $O/$K/start.o \
+  $O/$K/console.o \
+  $O/$K/printf.o \
+  $O/$K/uart.o \
+  $O/$K/kalloc.o \
+  $O/$K/spinlock.o \
+  $O/$K/string.o \
+  $O/$K/main.o \
+  $O/$K/vm.o \
+  $O/$K/proc.o \
+  $O/$K/swtch.o \
+  $O/$K/trampoline.o \
+  $O/$K/trap.o \
+  $O/$K/syscall.o \
+  $O/$K/sysproc.o \
+  $O/$K/bio.o \
+  $O/$K/fs.o \
+  $O/$K/log.o \
+  $O/$K/sleeplock.o \
+  $O/$K/file.o \
+  $O/$K/pipe.o \
+  $O/$K/exec.o \
+  $O/$K/sysfile.o \
+  $O/$K/kernelvec.o \
+  $O/$K/plic.o \
+  $O/$K/virtio_disk.o \
 
 ifeq ($(LAB),pgtbl)
 OBJS += $K/vmcopyin.o
@@ -92,41 +93,41 @@ endif
 
 LDFLAGS = -z max-page-size=4096
 
-$K/kernel: $(OBJS) $K/kernel.ld $U/initcode
-	$(LD) $(LDFLAGS) -T $K/kernel.ld -o $K/kernel $(OBJS) 
-	$(OBJDUMP) -S $K/kernel > $K/kernel.asm
-	$(OBJDUMP) -t $K/kernel | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > $K/kernel.sym
+$K/kernel: $(OBJS) $K/kernel.ld $O/$U/initcode
+	$(LD) $(LDFLAGS) -T $K/kernel.ld -o $O/$K/kernel $(OBJS) 
+	$(OBJDUMP) -S $O/$K/kernel > $O/$K/kernel.asm
+	$(OBJDUMP) -t $O/$K/kernel | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > $O/$K/kernel.sym
 
 $U/initcode: $U/initcode.S
-	$(CC) $(CFLAGS) -march=rv64g -nostdinc -I. -Ikernel -c $U/initcode.S -o $U/initcode.o
-	$(LD) $(LDFLAGS) -N -e start -Ttext 0 -o $U/initcode.out $U/initcode.o
-	$(OBJCOPY) -S -O binary $U/initcode.out $U/initcode
-	$(OBJDUMP) -S $U/initcode.o > $U/initcode.asm
+	$(CC) $(CFLAGS) -march=rv64g -nostdinc -I. -Ikernel -c $U/initcode.S -o $O/$U/initcode.o
+	$(LD) $(LDFLAGS) -N -e start -Ttext 0 -o $O/$U/initcode.out $O/$U/initcode.o
+	$(OBJCOPY) -S -O binary $O/$U/initcode.out $O/$U/initcode
+	$(OBJDUMP) -S $O/$U/initcode.o > $O/$U/initcode.asm
 
 tags: $(OBJS) _init
 	etags *.S *.c
 
-ULIB = $L/usys.o $L/ulib.o $L/printf.o $L/umalloc.o $L/lib.o
+ULIB = $O/$L/usys.o $O/$L/ulib.o $O/$L/printf.o $O/$L/umalloc.o $O/$L/lib.o
 
 %.o: %.c
-	 $(CC) $(CFLAGS) -I/usr/local/opt/tcl-tk/include -c -o $@ $^
+	 $(CC) $(CFLAGS) -I/usr/local/opt/tcl-tk/include -c -o output/$@ $^
 
 _%: %.o $(ULIB)
-	$(LD) $(LDFLAGS) -N -e main -Ttext 0 -o $@ $^
+	$(LD) $(LDFLAGS) -N -e main -Ttext 0 -o output/$@ output/$^
 	$(OBJDUMP) -S $@ > $*.asm
 	$(OBJDUMP) -t $@ | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > $*.sym
 
-$L/usys.S : $L/usys.pl
-	perl $L/usys.pl > $L/usys.S
+$O/$L/usys.S : $L/usys.pl
+	perl $L/usys.pl > $O/$L/usys.S
 
-$L/usys.o : $L/usys.S
-	$(CC) $(CFLAGS) -c -o $L/usys.o $L/usys.S
+$O/$L/usys.o : $O/$L/usys.S
+	$(CC) $(CFLAGS) -c -o $O/$L/usys.o $O/$L/usys.S
 
-$U/_forktest: $U/forktest.o $(ULIB)
+$O/$U/_forktest: $O/$U/forktest.o $(ULIB)
 	# forktest has less library code linked in - needs to be small
 	# in order to be able to max out the proc table.
-	$(LD) $(LDFLAGS) -N -e main -Ttext 0 -o $U/_forktest $U/forktest.o $L/ulib.o $L/usys.o
-	$(OBJDUMP) -S $U/_forktest > $U/forktest.asm
+	$(LD) $(LDFLAGS) -N -e main -Ttext 0 -o $O/$U/_forktest $O/$U/forktest.o $O/$L/ulib.o $O/$L/usys.o
+	$(OBJDUMP) -S $O/$U/_forktest > $O/$U/forktest.asm
 
 mkfs/mkfs: mkfs/mkfs.c $K/fs.h $K/param.h
 	gcc -Werror -Wall -I. -o mkfs/mkfs mkfs/mkfs.c
@@ -138,30 +139,30 @@ mkfs/mkfs: mkfs/mkfs.c $K/fs.h $K/param.h
 .PRECIOUS: %.o
 
 UPROGS=\
-	$U/_init\
-	$C/_cat\
-	$C/_echo\
-	$C/_forktest\
-	$C/_grep\
-	$C/_kill\
-	$C/_ln\
-	$C/_ls\
-	$C/_mkdir\
-	$C/_rm\
-	$C/_sh\
-	$C/_stressfs\
-	$C/_usertests\
-	$C/_grind\
-	$C/_wc\
-	$C/_zombie\
-	$C/_trace\
-	$C/_sysinfotest\
-	$C/_sleep\
-	$C/_pingpong\
-	$C/_find\
-	$C/_xargs\
-	$C/_primes\
-	$C/_test\
+	$O/$U/_init\
+	$O/$C/_cat\
+	$O/$C/_echo\
+	$O/$C/_forktest\
+	$O/$C/_grep\
+	$O/$C/_kill\
+	$O/$C/_ln\
+	$O/$C/_ls\
+	$O/$C/_mkdir\
+	$O/$C/_rm\
+	$O/$C/_sh\
+	$O/$C/_stressfs\
+	$O/$C/_usertests\
+	$O/$C/_grind\
+	$O/$C/_wc\
+	$O/$C/_zombie\
+	$O/$C/_trace\
+	$O/$C/_sysinfotest\
+	$O/$C/_sleep\
+	$O/$C/_pingpong\
+	$O/$C/_find\
+	$O/$C/_xargs\
+	$O/$C/_primes\
+	$O/$C/_test\
 
 ifeq ($(LAB),trap)
 UPROGS += \
@@ -185,17 +186,17 @@ ifeq ($(LAB),util)
 	UEXTRA += $U/xargstest.sh
 endif
 
-fs.img: mkfs/mkfs README $(UEXTRA) $(UPROGS)
-	mkfs/mkfs fs.img README $(UEXTRA) $(UPROGS)
+fs.img: mkfs/mkfs README.md $(UEXTRA) $(UPROGS)
+	mkfs/mkfs fs.img README.md $(UEXTRA) $(UPROGS)
 
 -include kernel/*.d user/*.d
 
 clean: 
 	rm -f *.tex *.dvi *.idx *.aux *.log *.ind *.ilg \
 	*/*.o */*.d */*.asm */*.sym \
-	$U/initcode $U/initcode.out $K/kernel fs.img \
+	$O/$U/initcode $O/$U/initcode.out $O/$K/kernel fs.img \
 	mkfs/mkfs .gdbinit \
-        $L/usys.S \
+        $O/$L/usys.S \
 	$(UPROGS)
 
 # try to generate a unique GDB port
@@ -208,7 +209,7 @@ ifndef CPUS
 CPUS := 3
 endif
 
-QEMUOPTS = -machine virt -bios none -kernel $K/kernel -m 128M -smp $(CPUS) -nographic
+QEMUOPTS = -machine virt -bios none -kernel $O/$K/kernel -m 128M -smp $(CPUS) -nographic
 QEMUOPTS += -drive file=fs.img,if=none,format=raw,id=x0
 QEMUOPTS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
 
