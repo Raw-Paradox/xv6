@@ -60,8 +60,7 @@ mycpu(void) {
 }
 
 // Return the current struct proc *, or zero if none.
-struct proc *
-myproc(void) {
+struct proc * myproc(void) {
     push_off();
     struct cpu *c = mycpu();
     struct proc *p = c->proc;
@@ -80,12 +79,24 @@ int allocpid() {
     return pid;
 }
 
+// Look in the process table for exist proc
+int pidnum() {
+    int num = 0;
+    for (struct proc *p = proc; p < &proc[NPROC]; p++) {
+        acquire(&p->lock);
+        if (p->state != UNUSED) {
+            num++;
+        }
+        release(&p->lock);
+    }
+    return num;
+}
+
 // Look in the process table for an UNUSED proc.
 // If found, initialize state required to run in the kernel,
 // and return with p->lock held.
 // If there are no free procs, or a memory allocation fails, return 0.
-static struct proc *
-allocproc(void) {
+static struct proc * allocproc(void) {
     struct proc *p;
 
     for (p = proc; p < &proc[NPROC]; p++) {

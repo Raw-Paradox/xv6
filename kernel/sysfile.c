@@ -18,8 +18,7 @@
 
 // Fetch the nth word-sized system call argument as a file descriptor
 // and return both the descriptor and the corresponding struct file.
-static int
-argfd(int n, int *pfd, struct file **pf) {
+static int argfd(int n, int *pfd, struct file **pf) {
     int fd;
     struct file *f;
 
@@ -36,8 +35,7 @@ argfd(int n, int *pfd, struct file **pf) {
 
 // Allocate a file descriptor for the given file.
 // Takes over file reference from caller on success.
-static int
-fdalloc(struct file *f) {
+static int fdalloc(struct file *f) {
     int fd;
     struct proc *p = myproc();
 
@@ -50,8 +48,7 @@ fdalloc(struct file *f) {
     return -1;
 }
 
-uint64
-sys_dup(void) {
+uint64 sys_dup(void) {
     struct file *f;
     int fd;
 
@@ -63,8 +60,7 @@ sys_dup(void) {
     return fd;
 }
 
-uint64
-sys_read(void) {
+uint64 sys_read(void) {
     struct file *f;
     int n;
     uint64 p;
@@ -228,8 +224,7 @@ bad:
     return -1;
 }
 
-static struct inode *
-create(char *path, short type, short major, short minor) {
+static struct inode * create(char *path, short type, short major, short minor) {
     struct inode *ip, *dp;
     char name[DIRSIZ];
 
@@ -272,8 +267,7 @@ create(char *path, short type, short major, short minor) {
     return ip;
 }
 
-uint64
-sys_open(void) {
+uint64 sys_open(void) {
     char path[MAXPATH];
     int fd, omode;
     struct file *f;
