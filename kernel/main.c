@@ -10,6 +10,7 @@ volatile static int started = 0;
 void main() {
     if (cpuid() == 0) {
         consoleinit();
+        statsinit();
         printfinit();
         printf("\n");
         printf("xv6 kernel is booting\n");
@@ -26,7 +27,11 @@ void main() {
         iinit();             // inode cache
         fileinit();          // file table
         virtio_disk_init();  // emulated hard disk
-        userinit();          // first user process
+#ifdef LAB_NET
+        pci_init();
+        sockinit();
+#endif
+        userinit();  // first user process
         __sync_synchronize();
         started = 1;
     } else {
@@ -38,6 +43,5 @@ void main() {
         trapinithart();  // install kernel trap vector
         plicinithart();  // ask PLIC for device interrupts
     }
-
     scheduler();
 }

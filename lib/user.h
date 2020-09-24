@@ -34,6 +34,7 @@ int sleep(int);
 int uptime(void);
 int trace(int);
 int sysinfo(struct sysinfo* info);
+int connect(uint32, uint16, uint16);
 
 // ulib.c
 int stat(const char*, struct stat*);
@@ -46,6 +47,7 @@ int atoi(const char*);
 void* memset(void*, int, uint);
 int memcmp(const void*, const void*, uint);
 void* memcpy(void*, const void*, uint);
+int statistics(void*, int);
 
 // printf.c
 void fprintf(int, const char*, ...);
